@@ -1,0 +1,26 @@
+/* 
+  Localizable.strings (Turkish)
+  DXBiometric SDK
+*/
+
+/* Error: Biometric authentication is not available */
+"biometric_error_not_available" = "Biyometrik kimlik doğrulama bu cihazda kullanılamıyor";
+
+/* Error: No biometric data enrolled */
+"biometric_error_not_enrolled" = "Kayıtlı biyometrik veri yok. Lütfen Ayarlar'dan Face ID veya Touch ID kurun";
+
+/* Error: Biometric authentication locked */
+"biometric_error_lockout" = "Çok fazla başarısız deneme nedeniyle biyometrik kimlik doğrulama kilitlendi";
+
+/* Error: User cancelled authentication */
+"biometric_error_cancelled" = "Kimlik doğrulama kullanıcı tarafından iptal edildi";
+
+/* Error: User chose fallback */
+"biometric_error_fallback" = "Kullanıcı alternatif kimlik doğrulama yöntemini seçti";
+
+/* Error: System error occurred */
+"biometric_error_system" = "Sistem hatası: %@";
+
+/* Error: Unknown error */
+"biometric_error_unknown" = "Kimlik doğrulama sırasında bilinmeyen bir hata oluştu";
+
