@@ -33,10 +33,7 @@ let package = Package(
         .target(
             name: "DXBiometric",
             dependencies: [],
-            path: "Sources/DXBiometric",
-            resources: [
-                .process("Resources")
-            ]
+            path: "Sources/DXBiometric"
         ),
         
         // Test target

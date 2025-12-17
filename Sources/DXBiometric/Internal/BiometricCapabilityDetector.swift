@@ -5,7 +5,6 @@ import LocalAuthentication
 ///
 /// This class is responsible for determining what type of biometric authentication
 /// is available on the current device (Face ID, Touch ID, or none).
-@available(iOS 11.0, macOS 10.13.2, *)
 internal final class BiometricCapabilityDetector {
     
     // MARK: - Properties

@@ -7,15 +7,16 @@ Pod::Spec.new do |spec|
   spec.description  = <<-DESC
     DXBiometric is a production-ready iOS SDK for biometric authentication.
     It provides a simple, clean API for Face ID and Touch ID authentication
-    with built-in error handling, localization support, and testable architecture.
+    with built-in error handling and testable architecture.
     
     Features:
     - Face ID and Touch ID support
     - iOS 12.0+ compatibility
-    - Built-in English and Turkish localization
+    - Swift 6 concurrency compatible
     - Protocol-based testable architecture
     - Thread-safe operations
     - Clean Result-based API
+    - Semantic error types for flexible UI handling
   DESC
 
   # MARK: - URLs and Metadata
@@ -33,11 +34,6 @@ Pod::Spec.new do |spec|
   
   # MARK: - Source Files
   spec.source_files = 'Sources/DXBiometric/**/*.{swift}'
-  
-  # MARK: - Resources
-  spec.resource_bundles = {
-    'DXBiometric' => ['Sources/DXBiometric/Resources/**/*']
-  }
   
   # MARK: - Frameworks
   spec.frameworks = 'Foundation', 'LocalAuthentication'

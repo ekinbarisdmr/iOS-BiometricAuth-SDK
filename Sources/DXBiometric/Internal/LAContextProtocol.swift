@@ -5,7 +5,11 @@ import LocalAuthentication
 ///
 /// This protocol wraps the essential LAContext methods needed for biometric authentication,
 /// allowing us to inject mock implementations in unit tests.
-@available(iOS 11.0, macOS 10.13.2, *)
+///
+/// **Technical Note - Sendability:**
+/// iOS 12 deployment target kullanıyoruz, ancak Swift 6 concurrency uyumluluğu için
+/// evaluatePolicy closure'ını @Sendable olarak işaretliyoruz. Bu, closure'ın thread-safe
+/// olduğunu garanti eder ve modern Swift concurrency modeline uyum sağlar.
 internal protocol LAContextProtocol {
     /// Evaluates the specified policy
     func canEvaluatePolicy(_ policy: LAPolicy, error: NSErrorPointer) -> Bool
@@ -17,7 +21,7 @@ internal protocol LAContextProtocol {
     func evaluatePolicy(
         _ policy: LAPolicy,
         localizedReason: String,
-        reply: @escaping (Bool, Error?) -> Void
+        reply: @escaping @Sendable (Bool, Error?) -> Void
     )
     
     /// Custom title for the fallback button
@@ -25,8 +29,5 @@ internal protocol LAContextProtocol {
 }
 
 // MARK: - LAContext Conformance
-@available(iOS 11.0, macOS 10.13.2, *)
-extension LAContext: LAContextProtocol {
-    // LAContext already conforms to this protocol
-}
+extension LAContext: LAContextProtocol {}
 

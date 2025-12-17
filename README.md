@@ -35,9 +35,37 @@ pod 'DXBiometric', '~> 1.0'
 
 ### Carthage
 
-```
+1. **Add to your `Cartfile`:**
+
+```ruby
 github "DefineX/DXBiometric" ~> 1.0
 ```
+
+2. **Build XCFrameworks:**
+
+```bash
+carthage update --use-xcframeworks --platform iOS
+```
+
+3. **Add to Xcode:**
+   - Open your app project in Xcode
+   - Navigate to your target's **General** tab
+   - Under **Frameworks, Libraries, and Embedded Content**, click `+`
+   - Click **Add Other...** → **Add Files...**
+   - Navigate to `Carthage/Build/DXBiometric.xcframework`
+   - Select it and ensure **Embed & Sign** is selected
+
+4. **Import and use:**
+
+```swift
+import DXBiometric
+
+DXBiometricAuth.shared.authenticate(reason: "Login") { result in
+    // Handle result
+}
+```
+
+**Note:** If you encounter build script issues, ensure `ENABLE_USER_SCRIPT_SANDBOXING` is set to `NO` in your project's build settings (Xcode 16+).
 
 ## Usage
 

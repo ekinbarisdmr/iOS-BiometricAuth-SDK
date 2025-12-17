@@ -5,7 +5,6 @@ import LocalAuthentication
 ///
 /// This class wraps LocalAuthentication framework and provides
 /// a clean interface for performing biometric authentication.
-@available(iOS 11.0, macOS 10.13.2, *)
 internal final class BiometricAuthenticator {
     
     // MARK: - Properties
@@ -44,75 +43,93 @@ internal final class BiometricAuthenticator {
         context.evaluatePolicy(
             .deviceOwnerAuthenticationWithBiometrics,
             localizedReason: reason
-        ) { [weak self] success, error in
+        ) { success, error in
             // Ensure completion is called on main thread
             DispatchQueue.main.async {
                 if success {
-                    // Authentication successful
                     completion(.success(()))
                 } else {
                     // Authentication failed - map error
-                    let biometricError = self?.mapError(error) ?? .unknown
+                    let biometricError = Self.mapError(error)
                     completion(.failure(biometricError))
                 }
             }
         }
+
     }
     
     // MARK: - Private Methods
     
     /// Maps LAError to BiometricError
     ///
+    /// **Teknik Not:**
+    /// iOS LocalAuthentication framework'ünden gelen LAError kodlarını
+    /// SDK'nın semantic BiometricError type'larına dönüştürür.
+    ///
     /// - Parameter error: The error from LocalAuthentication
     /// - Returns: Corresponding BiometricError
-    private func mapError(_ error: Error?) -> BiometricError {
-        guard let error = error else {
-            return .unknown
-        }
-        
-        // Cast to NSError to access code
+    private static func mapError(_ error: Error?) -> BiometricError {
+        guard let error = error else { return .unknown }
+
         let nsError = error as NSError
-        
-        // Map LAError codes to BiometricError
+
         guard nsError.domain == LAError.errorDomain else {
             return .systemError(nsError.localizedDescription)
         }
-        
+
         let laErrorCode = LAError.Code(rawValue: nsError.code)
         
         switch laErrorCode {
         case .userCancel:
+            // Kullanıcı Face ID/Touch ID popup'ında "İptal" butonuna bastı
+            // App tarafı: Sessizce handle edilebilir, tekrar giriş ekranı gösterilebilir
             return .cancelled
             
         case .userFallback:
+            // Kullanıcı popup'ta "Şifre ile giriş yap" gibi fallback seçeneğini seçti
+            // App tarafı: Alternatif auth yöntemi (PIN, password) gösterebilir
             return .fallback
             
         case .biometryNotAvailable:
+            // Cihazda Face ID/Touch ID donanımı yok VEYA kullanıcı Ayarlar'dan izni kapattı
+            // App tarafı: Alternatif auth yöntemi sunmalı (PIN, password zorunlu)
             return .notAvailable
             
         case .biometryNotEnrolled:
+            // Cihazda Face ID/Touch ID var ama kullanıcı kayıt yapmamış
+            // App tarafı: Kullanıcıyı Ayarlar'a yönlendirebilir veya alternatif auth sunabilir
             return .notEnrolled
             
         case .biometryLockout:
+            // Çok fazla başarısız deneme yapıldı, Face ID/Touch ID kilitlendi
+            // App tarafı: Kullanıcıya cihaz şifresi ile unlock etmesi gerektiğini söylemeli
             return .lockout
             
         case .authenticationFailed:
-            // User failed to provide valid credentials (e.g., wrong finger)
+            // Kullanıcı yanlış parmak/yüz gösterdi (3-5 deneme hakkı var)
+            // iOS otomatik tekrar dener, bu hata genelde son denemeden sonra gelir
+            // App tarafı: "Kimlik doğrulama başarısız" mesajı gösterebilir
             return .systemError("Authentication failed")
             
         case .appCancel, .systemCancel:
-            // App or system cancelled the authentication
+            // App kod tarafından iptal etti (LAContext.invalidate()) VEYA
+            // Sistem iptal etti (telefon kilitlendiyse, app background'a gittiyse)
+            // App tarafı: .cancelled ile aynı şekilde handle edilebilir
             return .cancelled
             
         case .invalidContext:
-            // Context is invalid
+            // LAContext nesnesi geçersiz durumda (nadir, SDK bug'ı olabilir)
+            // App tarafı: Tekrar deneme butonu sunabilir
             return .systemError("Invalid context")
             
         case .passcodeNotSet:
-            // Passcode is not set on device
+            // Cihazda passcode/PIN ayarlanmamış (Face ID/Touch ID için gerekli)
+            // App tarafı: Kullanıcıya önce cihaz şifresi ayarlaması gerektiğini söylemeli
             return .notEnrolled
             
         default:
+            // Bilinmeyen LAError kodu (gelecek iOS versiyonlarında yeni kodlar eklenebilir)
+            // App tarafı: Generic error mesajı gösterebilir
             return .unknown
         }
     }
