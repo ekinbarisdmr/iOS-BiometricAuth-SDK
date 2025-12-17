@@ -67,10 +67,10 @@ public final class DXBiometricAuth {
     /// **Teknik Detay:**
     /// - reason parametresi iOS native popup'ta kullanıcıya gösterilir
     /// - Apple Human Interface Guidelines bu mesajın açık ve anlamlı olmasını gerektirir
-    /// - Boş string verilirse iOS default mesaj gösterir (ancak önerilmez)
+    /// - Boş string verilirse SDK default mesaj kullanır: "Kimliğinizi doğrulayın"
     ///
     /// - Parameters:
-    ///   - reason: Kimlik doğrulama sebebi (iOS popup'ta gösterilir)
+    ///   - reason: Kimlik doğrulama sebebi (iOS popup'ta gösterilir). Boş verilirse default kullanılır.
     ///   - fallbackTitle: Optional custom title for the fallback button
     ///   - completion: Completion handler called with the authentication result
     public func authenticate(
@@ -83,8 +83,13 @@ public final class DXBiometricAuth {
             return
         }
         
+        // Boş veya sadece whitespace içeren reason varsa default kullan
+        let reasonToUse = reason.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+            ? "Kimliğinizi doğrulayın"
+            : reason
+        
         authenticator.authenticate(
-            reason: reason,
+            reason: reasonToUse,
             fallbackTitle: fallbackTitle,
             completion: completion
         )

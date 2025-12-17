@@ -1,38 +1,39 @@
 # Xcode
-.DS_Store
-build/
-*.pbxuser
-!default.pbxuser
-*.mode1v3
-!default.mode1v3
-*.mode2v3
-!default.mode2v3
-*.perspectivev3
-!default.perspectivev3
+*.xcodeproj/*
+!*.xcodeproj/project.pbxproj
+!*.xcodeproj/xcshareddata/
+!*.xcodeproj/project.xcworkspace/
+*.xcworkspace/*
+!*.xcworkspace/contents.xcworkspacedata
+!*.xcworkspace/xcshareddata/
+
+# User-specific files
 xcuserdata/
-*.xccheckout
 *.moved-aside
-DerivedData
-*.hmap
-*.ipa
+*.perspectivev3
 *.xcuserstate
-project.xcworkspace
+*.xccheckout
+
+# Build generated
+build/
+DerivedData/
+*.ipa
+*.dSYM.zip
+*.dSYM
 
 # Swift Package Manager
-.build/
 .swiftpm/
+.build/
+Packages/
 Package.resolved
 
 # CocoaPods
 Pods/
-*.xcworkspace
-!default.xcworkspace
 Podfile.lock
 
 # Carthage
-Carthage/Build
-Carthage/Checkouts
-Cartfile.resolved
+Carthage/Build/
+Carthage/Checkouts/
 
 # fastlane
 fastlane/report.xml
@@ -40,3 +41,9 @@ fastlane/Preview.html
 fastlane/screenshots/**/*.png
 fastlane/test_output
 
+# Code coverage
+*.gcda
+*.gcno
+
+# macOS
+.DS_Store

@@ -20,13 +20,13 @@ Pod::Spec.new do |spec|
   DESC
 
   # MARK: - URLs and Metadata
-  spec.homepage     = 'https://www.definex.com'
-  spec.license      = { :type => 'Proprietary', :text => 'Copyright © 2025 DefineX. All rights reserved.' }
-  spec.author       = { 'DefineX' => 'info@definex.com' }
+  spec.homepage     = 'https://github.com/Definex-Mobile/iOS-BiometricAuth-SDK'
+  spec.license      = { :type => 'Proprietary', :file => 'LICENSE' }
+  spec.author       = { 'DefineX Technology' => 'info@definex.com' }
   
   # MARK: - Source
   # For local development, use: pod 'DXBiometric', :path => '../DXBiometric'
-  spec.source       = { :git => 'https://github.com/DefineX/DXBiometric.git', :tag => "#{spec.version}" }
+  spec.source       = { :git => 'https://github.com/Definex-Mobile/iOS-BiometricAuth-SDK.git', :tag => "#{spec.version}" }
   
   # MARK: - Platform Requirements
   spec.ios.deployment_target = '12.0'
