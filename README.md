@@ -587,7 +587,7 @@ open DXBiometricLocalTest.xcworkspace
 For commercial licensing, custom features, or enterprise support:
 
 **DefineX Technology Inc.**
-- 📧 Email: info@definex.com
+- 📧 Email: ekin.demir@teamdefinex.com
 - 🌐 Website: https://www.definex.com
 - 📱 Mobile SDKs: https://github.com/Definex-Mobile
 
