@@ -60,23 +60,23 @@ Add to your `Package.swift`:
 
 ```swift
 dependencies: [
-    .package(url: "https://github.com/Definex-Mobile/iOS-BiometricAuth-SDK.git", from: "1.0.0")
+    .package(url: "https://github.com/ekinbarisdmr/iOS-BiometricAuth-SDK.git", from: "1.0.1")
 ]
 ```
 
 Or in Xcode:
 1. **File → Add Package Dependencies...**
-2. Enter URL: `https://github.com/Definex-Mobile/iOS-BiometricAuth-SDK.git`
-3. Select version: `1.0.0` or higher
+2. Enter URL: `https://github.com/ekinbarisdmr/iOS-BiometricAuth-SDK.git`
+3. Select version: `1.0.1` or higher
 
 ### CocoaPods
 
-#### Option 1: Via Git (Before Trunk Publish)
+#### Option 1: Via Git (Recommended)
 
 Add to your `Podfile`:
 
 ```ruby
-pod 'DXBiometric', :git => 'https://github.com/Definex-Mobile/iOS-BiometricAuth-SDK.git', :tag => '1.0.0'
+pod 'DXBiometric', :git => 'https://github.com/ekinbarisdmr/iOS-BiometricAuth-SDK.git', :tag => '1.0.1'
 ```
 
 #### Option 2: Via CocoaPods Trunk (After Publish)
@@ -108,7 +108,7 @@ pod trunk push DXBiometric.podspec
 1. Add to your `Cartfile`:
 
 ```ruby
-github "Definex-Mobile/iOS-BiometricAuth-SDK" ~> 1.0
+github "ekinbarisdmr/iOS-BiometricAuth-SDK" ~> 1.0
 ```
 
 2. Build XCFrameworks:
@@ -563,6 +563,15 @@ open DXBiometricLocalTest.xcworkspace
 ---
 
 ## 📝 Version History
+
+### 1.0.1 (2025-12-18)
+
+**Bug Fixes**
+
+- ✅ Fixed CocoaPods `use_frameworks!` rsync/_CodeSignature permission errors
+- ✅ Added `static_framework = true` to force static linking
+- ✅ Disabled code signing on pod target to prevent embed issues
+- ✅ Updated repository URLs to personal repo
 
 ### 1.0.0 (2025-01-XX)
 

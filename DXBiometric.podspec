@@ -1,7 +1,7 @@
 Pod::Spec.new do |spec|
   # MARK: - Basic Information
   spec.name         = 'DXBiometric'
-  spec.version      = '1.0.0'
+  spec.version      = '1.0.1'
   spec.summary      = 'A clean, testable iOS Biometric Authentication SDK'
   
   spec.description  = <<-DESC
@@ -20,20 +20,31 @@ Pod::Spec.new do |spec|
   DESC
 
   # MARK: - URLs and Metadata
-  spec.homepage     = 'https://github.com/Definex-Mobile/iOS-BiometricAuth-SDK'
+  spec.homepage     = 'https://github.com/ekinbarisdmr/iOS-BiometricAuth-SDK'
   spec.license      = { :type => 'Proprietary', :file => 'LICENSE' }
-  spec.author       = { 'DefineX Technology' => 'info@definex.com' }
+  spec.author       = { 'Ekin Barış Demir' => 'ekin.demir@teamdefinex.com' }
   
   # MARK: - Source
   # For local development, use: pod 'DXBiometric', :path => '../DXBiometric'
-  spec.source       = { :git => 'https://github.com/Definex-Mobile/iOS-BiometricAuth-SDK.git', :tag => "#{spec.version}" }
+  spec.source       = { :git => 'https://github.com/ekinbarisdmr/iOS-BiometricAuth-SDK.git', :tag => "#{spec.version}" }
   
   # MARK: - Platform Requirements
   spec.ios.deployment_target = '12.0'
   spec.swift_version = '5.7'
 
   # ✅ SDK-side fix: force static framework even if apps use `use_frameworks!`
+  # This prevents dynamic framework embedding issues with rsync/_CodeSignature
   spec.static_framework = true
+  
+  # ✅ Disable code signing for pod target to prevent rsync permission errors
+  # These settings apply ONLY to the pod target, not the host app
+  spec.pod_target_xcconfig = {
+    'CODE_SIGNING_ALLOWED' => 'NO',
+    'CODE_SIGNING_REQUIRED' => 'NO',
+    'CODE_SIGNING_IDENTITY' => '',
+    'EXPANDED_CODE_SIGN_IDENTITY' => '',
+    'DEVELOPMENT_TEAM' => ''
+  }
   
   # MARK: - Source Files
   spec.source_files = 'Sources/DXBiometric/**/*.{swift}'
