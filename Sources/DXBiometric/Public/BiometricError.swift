@@ -27,7 +27,7 @@ import Foundation
 ///     }
 /// }
 /// ```
-public enum BiometricError: Error {
+public enum BiometricError: Error, Equatable {
     /// Biometric authentication is not available on this device
     case notAvailable
     
@@ -42,6 +42,9 @@ public enum BiometricError: Error {
     
     /// User chose to use the fallback method
     case fallback
+    
+    /// Biometric authentication failed (wrong face/fingerprint)
+    case authenticationFailed
     
     /// A system error occurred
     case systemError(String)
@@ -64,6 +67,7 @@ extension BiometricError {
         case .lockout: return "biometric_error_lockout"
         case .cancelled: return "biometric_error_cancelled"
         case .fallback: return "biometric_error_fallback"
+        case .authenticationFailed: return "biometric_error_authentication_failed"
         case .systemError: return "biometric_error_system"
         case .unknown: return "biometric_error_unknown"
         }

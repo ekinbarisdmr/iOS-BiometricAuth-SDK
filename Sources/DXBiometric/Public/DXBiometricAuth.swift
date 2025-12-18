@@ -78,7 +78,9 @@ public final class DXBiometricAuth {
         fallbackTitle: String? = nil,
         completion: @escaping (Result<Void, BiometricError>) -> Void
     ) {
-        guard isBiometricAvailable() else {
+        // Check if any biometric type is available
+        let type = availableBiometricType()
+        guard type != .none else {
             completion(.failure(.notAvailable))
             return
         }

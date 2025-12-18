@@ -22,40 +22,58 @@ internal final class BiometricAuthenticator {
     
     /// Performs biometric authentication
     ///
+    /// **Teknik Detay:**
+    /// - iOS native prompt'u zaten 2-3 deneme hakkı verir (Face ID/Touch ID)
+    /// - SDK tarafında ekstra retry yapmaya gerek yok
+    /// - Tek evaluatePolicy çağrısı yapılır
+    ///
+    /// **Passcode Fallback:**
+    /// - Uses .deviceOwnerAuthenticationWithBiometrics policy (no passcode fallback)
+    /// - Sets localizedFallbackTitle to empty string to hide fallback button
+    /// - fallbackTitle parametresi ignore edilir (passcode disabled)
+    ///
     /// - Parameters:
     ///   - reason: The reason shown to the user for authentication
-    ///   - fallbackTitle: Optional custom title for the fallback button
+    ///   - fallbackTitle: Optional custom title for the fallback button (ignored - passcode disabled)
     ///   - completion: Completion handler with Result<Void, BiometricError>
     func authenticate(
         reason: String,
         fallbackTitle: String?,
         completion: @escaping (Result<Void, BiometricError>) -> Void
     ) {
-        // Create a new context for this authentication attempt
+        // Create a new context for this authentication
         var context = contextFactory()
         
-        // Set fallback title if provided
-        if let fallbackTitle = fallbackTitle {
-            context.localizedFallbackTitle = fallbackTitle
+        // Set fallback title to empty string to hide passcode fallback button
+        // This ensures no passcode option appears in the UI
+        // Note: fallbackTitle parameter is ignored to enforce passcode-free policy
+        context.localizedFallbackTitle = ""
+        
+        // Use flag to ensure completion is called exactly once
+        var isFinished = false
+        let finish: (Result<Void, BiometricError>) -> Void = { result in
+            guard !isFinished else { return }
+            isFinished = true
+            
+            DispatchQueue.main.async {
+                completion(result)
+            }
         }
         
-        // Evaluate biometric policy
+        // Evaluate biometrics-only policy (no passcode fallback)
+        // iOS will handle retry attempts (2-3 tries) within the native prompt
         context.evaluatePolicy(
             .deviceOwnerAuthenticationWithBiometrics,
             localizedReason: reason
         ) { success, error in
-            // Ensure completion is called on main thread
-            DispatchQueue.main.async {
-                if success {
-                    completion(.success(()))
-                } else {
-                    // Authentication failed - map error
-                    let biometricError = Self.mapError(error)
-                    completion(.failure(biometricError))
-                }
+            if success {
+                finish(.success(()))
+            } else {
+                // Authentication failed - map error
+                let biometricError = Self.mapError(error)
+                finish(.failure(biometricError))
             }
         }
-
     }
     
     // MARK: - Private Methods
@@ -80,11 +98,6 @@ internal final class BiometricAuthenticator {
         let laErrorCode = LAError.Code(rawValue: nsError.code)
         
         switch laErrorCode {
-        case .userCancel:
-            // Kullanıcı Face ID/Touch ID popup'ında "İptal" butonuna bastı
-            // App tarafı: Sessizce handle edilebilir, tekrar giriş ekranı gösterilebilir
-            return .cancelled
-            
         case .userFallback:
             // Kullanıcı popup'ta "Şifre ile giriş yap" gibi fallback seçeneğini seçti
             // App tarafı: Alternatif auth yöntemi (PIN, password) gösterebilir
@@ -106,26 +119,16 @@ internal final class BiometricAuthenticator {
             return .lockout
             
         case .authenticationFailed:
-            // Kullanıcı yanlış parmak/yüz gösterdi (3-5 deneme hakkı var)
-            // iOS otomatik tekrar dener, bu hata genelde son denemeden sonra gelir
+            // Kullanıcı yanlış parmak/yüz gösterdi
+            // SDK bu durumda 2. deneme yapar (retry logic)
             // App tarafı: "Kimlik doğrulama başarısız" mesajı gösterebilir
-            return .systemError("Authentication failed")
+            return .authenticationFailed
             
-        case .appCancel, .systemCancel:
+        case .appCancel, .systemCancel, .userCancel:
             // App kod tarafından iptal etti (LAContext.invalidate()) VEYA
             // Sistem iptal etti (telefon kilitlendiyse, app background'a gittiyse)
             // App tarafı: .cancelled ile aynı şekilde handle edilebilir
             return .cancelled
-            
-        case .invalidContext:
-            // LAContext nesnesi geçersiz durumda (nadir, SDK bug'ı olabilir)
-            // App tarafı: Tekrar deneme butonu sunabilir
-            return .systemError("Invalid context")
-            
-        case .passcodeNotSet:
-            // Cihazda passcode/PIN ayarlanmamış (Face ID/Touch ID için gerekli)
-            // App tarafı: Kullanıcıya önce cihaz şifresi ayarlaması gerektiğini söylemeli
-            return .notEnrolled
             
         default:
             // Bilinmeyen LAError kodu (gelecek iOS versiyonlarında yeni kodlar eklenebilir)
