@@ -31,6 +31,9 @@ Pod::Spec.new do |spec|
   # MARK: - Platform Requirements
   spec.ios.deployment_target = '12.0'
   spec.swift_version = '5.7'
+
+  # ✅ SDK-side fix: force static framework even if apps use `use_frameworks!`
+  spec.static_framework = true
   
   # MARK: - Source Files
   spec.source_files = 'Sources/DXBiometric/**/*.{swift}'
